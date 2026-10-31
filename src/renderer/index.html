@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DishDeck - Your #1 Recipe Search</title>
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>DishDeck</h1>
+      <!-- The app main navigation -->
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link nav-link--active">Search</a>
+        <a href="plans.html" class="nav-link">My Plans</a>
+      </nav>
+    </header>
+
+    <!-- Main content of the page -->
+    <main class="main-content">
+      <!-- Search bar -->
+      <section class="search-section">
+        <h2>Find a Recipe</h2>
+        <form id="search-form" class="search-form">
+          <label for="search-input" class="form-label">
+            Search by dish name:
+          </label>
+          <input
+            type="text"
+            id="search-input"
+            class="form-input"
+            placeholder="e.g., Rendang or Pasta"
+          >
+          <button type="submit" class="btn btn--primary">Search</button>
+        </form>
+        <!--
+          The <div> below is where the app will tell whether the operation
+          successful or not
+        -->
+        <div id="search-feedback" class="feedback" aria-live="polite"></div>
+      </section>
+
+      <!-- Quick Suggestions -->
+      <section class="suggestion-section">
+        <h2>Quick Suggestions</h2>
+        <label for="category-select" class="form-label">Pick a category:</label>
+        <!--
+          Available API categories can be found here:
+          https://www.themealdb.com/api/json/v1/1/categories.php
+        -->
+        <select id="category-select" class="form-select">
+          <option value="">-- Select Category--</option>
+          <option value="Beef">Beef</option>
+          <option value="Chicken">Chicken</option>
+          <option value="Dessert">Dessert</option>
+          <option value="Lamb">Lamb</option>
+          <option value="Miscellaneous">Miscellaneous</option>
+          <option value="Pasta">Pasta</option>
+          <option value="Seafood">Seafood</option>
+          <option value="Side">Side</option>
+          <option value="Starter">Starter</option>
+          <option value="Vegan">Vegan</option>
+          <option value="Vegetarian">Vegetarian</option>
+          <option value="Breakfast">Breakfast</option>
+          <option value="Goat">Goat</option>
+        </select>
+        <!--
+          The <div> below is where the app will tell whether the operation
+          successful or not
+        -->
+        <div id="suggestion-feedback" class="feedback" aria-live="polite"></div>
+      </section>
+
+      <!-- Recipe Cards -->
+      <section id="recipe-display" class="recipe-display">
+        <!-- Recipe cards will be added here by JavaScript -->
+      </section>
+    </main>
+
+    <script src="js/search.js"></script>
+  </body>
+</html>
