@@ -174,6 +174,75 @@ function scaleMeasurement(ingredientMeasurement, factor) {
 }
 
 /**
+  * Builds a DOM element that will displays the recipe instructions.
+  * The API returns instructions as a single big chunk of string with \r\n line
+  * breaks (the Windows CRLF). As most recipes are step by step, we render it as
+  * an <ol> (ordered list) if there are multiple lines, otherwise we simply
+  * render it as a <p> (paragraph) instead.
+  * instructions: The raw strInstructions string returned from the API.
+  * Return: A DOM element ready to be append.
+  */
+function buildCookingInstructionsElement(instructions) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'recipe-card__instructions';
+
+  const heading = document.createElement('h4');
+  heading.className = 'recipe-card__instructions-title';
+  heading.textContent = 'Instructions';
+  wrapper.appendChild(heading);
+
+  if (!instructions || instructions.trim() === '') {
+    // This one recipe an anomaly because the API have no instructions for it
+    const empty = document.createElement('p');
+    empty.textContent = 'No instructions found unfortunately T-T';
+    wrapper.appendChild(empty);
+    return wrapper;
+  }
+
+  // Just so you know, the recipes' instruction line endings are nightmares to
+  // handle. But anyway, I need to split them up into different individual
+  // lines and I need to be really careful, because I found out that the API
+  // uses \r\n (Windows CRLF) for newlines. Let's replace it to Unix line ending
+  // first (the \n character) before split them up into individual lines.
+  // Elite ball knowledge huh? :D
+  const lines = instructions
+      .replace(/\r\n/g, '\n')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line !== '');
+
+  if (lines.length === 0) {
+    // Another anomaly, the string is not empty but every line is just
+    // whitespaces.
+    const empty = document.createElement('p');
+    empty.textContent = 'No instructions found unfortunately T-T';
+    wrapper.appendChild(empty);
+    return wrapper;
+  }
+
+  if (lines.length > 1) {
+    // Alright, we have multiple lines here and they're all ordered...
+    const list = document.createElement('ol');
+    list.className = 'recipe-card__steps';
+    lines.forEach((line) => {
+      // We wrap each line inside <li></li> tags
+      const item = document.createElement('li');
+      item.textContent = line;
+      list.appendChild(item);
+    });
+
+    wrapper.appendChild(list);
+  } else {
+    // Right, another anomaly. A single paragraph instruction only...
+    const paragraph = document.createElement('p');
+    paragraph.textContent = lines[0];
+    wrapper.appendChild(paragraph);
+  }
+
+  return wrapper;
+}
+
+/**
   * Renders a single recipe card into the specified container.
   * meal: The meal object returned by the API.
   * container: The parent element for the recipe card to be injected into.
@@ -247,6 +316,10 @@ function renderRecipeCard(meal, container) {
     renderIngredients(factor);
   });
 
+  const cookingInstructions = buildCookingInstructionsElement(
+      meal.strInstructions
+  );
+
   // Save as plan button
   const saveButton = document.createElement('button');
   saveButton.className = 'btn btn--primary';
@@ -255,7 +328,16 @@ function renderRecipeCard(meal, container) {
     savePlan(meal);
   });
 
-  card.append(title, image, meta, servingsLabel, ingredientList, saveButton);
+  card.append(
+      title,
+      image,
+      meta,
+      servingsLabel,
+      ingredientList,
+      cookingInstructions,
+      saveButton
+  );
+
   container.appendChild(card);
 }
 
