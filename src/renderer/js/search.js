@@ -1,3 +1,5 @@
+import {LOCAL_STORAGE_KEY, clearFeedback, showFeedback} from './utils.js';
+
 const API_BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
 
 const searchForm = document.getElementById('search-form');
@@ -6,35 +8,6 @@ const searchFeedback = document.getElementById('search-feedback');
 const categorySelect = document.getElementById('category-select');
 const suggestionFeedback = document.getElementById('suggestion-feedback');
 const recipeDisplay = document.getElementById('recipe-display');
-
-/**
-  * Clears any feedback messages in the given element.
-  * Feedback is used as a way to tell the user if an operation successful or
-  * not.
-  * element: The feedback element to clear.
-  */
-function clearFeedback(element) {
-  element.textContent = '';
-  // Remove feedback--success CSS styling
-  element.classList.remove('feedback--success');
-}
-
-/**
-  * Displays a feedback message with an optional success style.
-  * element: The feedback element to update.
-  * message: The message to show.
-  * isSuccess: Flag to indicate whether the message symbolizes a success.
-  */
-function showFeedback(element, message, isSuccess = false) {
-  element.textContent = message;
-  if (isSuccess) {
-    // Add feedback--success CSS styling
-    element.classList.add('feedback--success');
-  } else {
-    // Remove feedback--success CSS styling
-    element.classList.remove('feedback--success');
-  }
-}
 
 /**
   * Fetches recipes from TheMealDB using the given keyword.
