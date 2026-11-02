@@ -58,6 +58,45 @@ function fetchRecipes(keyword) {
 }
 
 /**
+  * Fetches full meal details for a given category.
+  * STEP 1: filter.php?c=<category> endpoint returns lightweight meal summaries.
+  * STEP 2: lookup.php?i=<id> endpoint returns details for each meal.
+  * category: The category name (e.g., "Seafood").
+  * Return: Full meal objects.
+  */
+function fetchRecipesByCategory(category) {
+  const url = `${API_BASE_URL}/filter.php?c=${encodeURIComponent(category)}`;
+  return fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`API request failed with ${response.status}`);
+        } else {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        const summaries = data.meals || [];
+        if (summaries.length === 0) {
+          // This basically means there is no data found at all
+          return [];
+        }
+
+        // Fetch full meal details for every meal ID parallely
+        const detailPromises = summaries.map((summary) => {
+          const lookupUrl = `${API_BASE_URL}/lookup.php?i=${summary.idMeal}`;
+          return fetch(lookupUrl)
+              .then((result) => result.json())
+              .then((detail) => (detail.meals ? detail.meals[0] : null));
+        });
+
+        return Promise.all(detailPromises).then((meals) => {
+            // Any null entries from the lookups must be removed
+            return meals.filter((meal) => meal !== null);
+        });
+      });
+}
+
+/**
   * Extracts a clean ingredient list from TheMealDB JSON.
   * The API returns up to 20 ingredients and its measure in separate
   * fields.
@@ -149,7 +188,13 @@ function renderRecipeCard(meal, container) {
 
   const meta = document.createElement('p');
   meta.className = 'recipe-card__meta';
-  meta.textContent = `${meal.strCategory} | ${meal.strArea}`;
+
+  // meal.strArea field may be null, thus a checking is needed
+  if (meal.strArea && meal.strArea.trim() !== '') {
+    meta.textContent = `${meal.strCategory} | ${meal.strArea}`;
+  } else {
+    meta.textContent = `${meal.strCategory}`;
+  }
 
   // The following is for the serving calculation feature
   const servingsLabel = document.createElement('label');
@@ -286,7 +331,7 @@ function handleCategorySuggestion(category) {
 
   showFeedback(suggestionFeedback, suggestion, true);
   searchInput.value = category;
-  fetchRecipes(category)
+  fetchRecipesByCategory(category)
       .then((meals) => {
         displayRecipes(meals);
       })
