@@ -1,4 +1,10 @@
-import {LOCAL_STORAGE_KEY, clearFeedback, showFeedback} from './utils.js';
+import {
+  LOCAL_STORAGE_KEY,
+  clearFeedback,
+  showFeedback,
+  loadPlans,
+  savePlans
+} from './utils.js';
 
 const API_BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
 
@@ -67,6 +73,33 @@ function fetchRecipesByCategory(category) {
             return meals.filter((meal) => meal !== null);
         });
       });
+}
+
+/**
+  * Saves a recipe as a plan inside the localStorage (CREATE operation).
+  * Duplicates is prevented by idMeal checking.
+  * meal: The meal object returned from the API.
+  */
+function savePlan(meal) {
+  const plans = loadPlans();
+  const exists = plans.some((plan) => plan.id === meal.idMeal);
+  if (exists) {
+    // The recipe is already saved inside the localStorage
+    showFeedback(searchFeedback, 'This recipe is already in your plans.');
+    return;
+  }
+
+  const newPlan = {
+    id: meal.idMeal,
+    strMeal: meal.strMeal,
+    strMealThumb: meal.strMealThumb,
+    note: '',
+    plannedDate: ''
+  };
+
+  plans.push(newPlan);
+  savePlans(plans);
+  showFeedback(searchFeedback, `"${meal.strMeal}" added to your plans.`, true);
 }
 
 /**
@@ -214,7 +247,15 @@ function renderRecipeCard(meal, container) {
     renderIngredients(factor);
   });
 
-  card.append(title, image, meta, servingsLabel, ingredientList);
+  // Save as plan button
+  const saveButton = document.createElement('button');
+  saveButton.className = 'btn btn--primary';
+  saveButton.textContent = 'Save to Plan';
+  saveButton.addEventListener('click', () => {
+    savePlan(meal);
+  });
+
+  card.append(title, image, meta, servingsLabel, ingredientList, saveButton);
   container.appendChild(card);
 }
 

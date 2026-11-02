@@ -34,3 +34,37 @@ export function showFeedback(element, message, isSuccess = false) {
     element.classList.remove('feedback--success');
   }
 }
+
+/**
+  * Reads the plans array stored inside the localStorage.
+  * Returns an empty array if nothing is stored or the JSON is corrupted.
+  * Return: The stored plans.
+  */
+export function loadPlans() {
+  const rawLocalData = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (!rawLocalData) {
+    // The localStorage is empty so just return a empty list
+    // Nyam Nyam
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(rawLocalData);
+    if (Array.isArray(parsed)) {
+      return parsed;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    // Hohoho the JSON is corrupted!
+    return [];
+  }
+}
+
+/**
+  * Writes the plans array to localStorage as a JSON.
+  * plans: The plans array to save.
+  */
+export function savePlans(plans) {
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(plans));
+}
