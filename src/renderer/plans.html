@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DishDeck - Your #1 Recipe Search</title>
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>DishDeck</h1>
+      <!-- The app main navigation -->
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link nav-link">Search</a>
+        <a href="plans.html" class="nav-link--active">My Plans</a>
+      </nav>
+    </header>
+
+    <!-- Main content of the page -->
+    <main class="main-content">
+      <!-- The plans introduction -->
+      <section class="plans-intro">
+        <h2>My Meal Plans</h2>
+        <p>
+          Save recipes from the Search page, add notes and cooking dates here.
+        </p>
+        <div id="plans-feedback" class="feedback" aria-live="polite"></div>
+      </section>
+
+      <!-- Saved plan cards -->
+      <section id="plans-display" class="plans-display">
+        <!-- Saved plans will be displayed here as individual cards -->
+      </section>
+
+      <!-- Edit dialog feature (hidden by default) -->
+      <dialog id="edit-dialog" class="edit-dialog">
+        <!-- The card edit form -->
+        <form id="edit-form" class="edit-form">
+          <h3>Edit Plan</h3>
+          <label for="edit-note" class="form-label">Note:</label>
+          <input
+            type="text"
+            id="edit-note"
+            class="form-input"
+            placeholder="e.g., Cook for dinner on Friday"
+            maxlength="120"
+          >
+          <label for=edit-date" class="form-label">Planned date:</label>
+          <input type="date" id="edit-date" class="form-input">
+
+          <!-- The edit form action buttons -->
+          <div class="edit-form__actions">
+            <button type="submit" class="btn btn--primary">Save Changes</button>
+            <button type="button" id="edit-cancel" class="btn btn--secondary">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </dialog>
+    </main>
+
+    <script src="js/plans.js"></script>
+  </body>
+</html>
