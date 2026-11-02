@@ -118,6 +118,24 @@ function openEditDialog(planId) {
 }
 
 /**
+  * Deletes a plan from localStorage after confirmation (DELETE operation).
+  * planId: The id of the targeted plan.
+  */
+function deletePlan(planId) {
+  const confirmed = confirm('Delete this plan? This cannot be undone.');
+  if (!confirmed) {
+    // The user clicked on Cancel
+    return;
+  }
+
+  const plans = loadPlans();
+  const filtered = plans.filter((plan) => plan.id !== planId);
+  savePlans(filtered);
+  renderAllPlans();
+  showFeedback(plansFeedback, 'Plan deleted successfully.', true);
+}
+
+/**
   * Handles clicks on Edit or Delete buttons through the click event.
   * event: The click event done by the user.
   */

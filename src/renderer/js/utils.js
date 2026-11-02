@@ -36,7 +36,7 @@ export function showFeedback(element, message, isSuccess = false) {
 }
 
 /**
-  * Reads the plans array stored inside the localStorage.
+  * Reads the plans array stored inside the localStorage (READ operation).
   * Returns an empty array if nothing is stored or the JSON is corrupted.
   * Return: The stored plans.
   */
@@ -62,7 +62,7 @@ export function loadPlans() {
 }
 
 /**
-  * Writes the plans array to localStorage as a JSON.
+  * Writes the plans array to localStorage as a JSON (WRITE operation).
   * plans: The plans array to save.
   */
 export function savePlans(plans) {
