@@ -3,7 +3,10 @@ import {
   clearFeedback,
   showFeedback,
   loadPlans,
-  savePlans
+  savePlans,
+  extractIngredients,
+  scaleMeasurement,
+  buildCookingInstructionsElement
 } from './utils.js';
 
 const plansDisplay = document.getElementById('plans-display');
@@ -19,61 +22,132 @@ let editingPlanId = null;
 
 /**
   * Renders a single plan card into the plans display area.
-  * plan: The plan object to render.
+  * This will displays the full recipe details plus user's note and planned
+  * date.
+  * plan: The stored plan object.
   */
 function renderPlanCard(plan) {
+  const meal = plan.meal;
   const card = document.createElement('article');
   card.className = 'plan-card';
-  card.dataset.planId = plan.id;
-
-  const image = document.createElement('img');
-  image.className = 'plan-card__image';
-  image.src = plan.strMealThumb;
-  image.alt = plan.strMeal;
-
-  const body = document.createElement('div');
-  body.className = 'plan-card__body';
+  card.dataset.planId = meal.idMeal;
 
   const title = document.createElement('h3');
   title.className = 'plan-card__title';
-  title.textContent = plan.strMeal;
+  title.textContent = meal.strMeal;
 
-  const note = document.createElement('p');
-  note.className = 'plan-card__note';
-  note.textContent = plan.note || 'No written note yet.';
+  const image = document.createElement('img');
+  image.className = 'plan-card__image';
+  image.src = meal.strMealThumb;
+  image.alt = meal.strMeal;
 
-  const date = document.createElement('p');
-  date.className = 'plan-card__date';
-  if (plan.plannedDate) {
-    date.textContent = `Planned for: ${plan.plannedDate}`;
+  const meta = document.createElement('p');
+  meta.className = 'plan-card__meta';
+  if (meal.strArea && meal.strArea.trim() !== '') {
+    meta.textContent = `${meal.strCategory} | ${meal.strArea}`;
   } else {
-    date.textContent = 'No setted date.';
+    meta.textContent = meal.strCategory;
   }
 
-  const actions = document.createElement('button');
+  const userNote = document.createElement('p');
+  userNote.className = 'plan-card__note';
+  if (plan.note) {
+    userNote.textContent = `Note: ${plan.note}`;
+  } else {
+    userNote.textContent = 'No written note yet.';
+  }
+
+  const userDate = document.createElement('p');
+  userDate.className = 'plan-card__date';
+  if (plan.plannedDate) {
+    userDate.textContent = `Planned for: ${plan.plannedDate}`;
+  } else {
+    userDate.textContent = 'No date set.';
+  }
+
+  // The following is for the serving calculation feature
+  const servingsLabel = document.createElement('label');
+  servingsLabel.className = 'form-label';
+  servingsLabel.textContent = 'Number of Servings (4 by default):';
+
+  const servingsInput = document.createElement('input');
+  servingsInput.type = 'number';
+  servingsInput.min = '1';
+  servingsInput.value = '4';
+  servingsInput.className = 'form-input recipe-card__servings';
+  servingsLabel.appendChild(servingsInput);
+
+  const ingredientList = document.createElement('ul');
+  ingredientList.className = 'recipe-card__ingredients';
+
+  // The renderIngredients below is an anonymous function ok?
+  const renderIngredients = (factor) => {
+    ingredientList.textContent = '';
+    const ingredients = extractIngredients(meal);
+    ingredients.forEach((ingredient) => {
+      const li = document.createElement('li');
+      li.textContent =
+          `${scaleMeasurement(ingredient.ingredientMeasurement, factor)} ` +
+          `${ingredient.ingredientName}`
+      ingredientList.appendChild(li);
+    });
+  }
+
+  // Initial render for base servings is 1
+  renderIngredients(1);
+
+  servingsInput.addEventListener('input', () => {
+    const servings = parseInt(servingsInput.value, 10);
+    if (isNaN(servings) || servings < 1) {
+      showFeedback(plansFeedback, 'Please enter a valid serving number.');
+      return;
+    }
+
+    clearFeedback(plansFeedback);
+    // Fun fact, by default the API measurements are based on 4 servings
+    // So yeah...
+    const factor = servings / 4;
+    renderIngredients(factor);
+  });
+
+  const cookingInstructions = buildCookingInstructionsElement(
+      meal.strInstructions
+  );
+
+  // Actions buttons (Edit/Delete)
+  const actions = document.createElement('div');
   actions.className = 'plan-card__actions';
 
   const editButton = document.createElement('button');
   editButton.className = 'btn btn--secondary';
   editButton.textContent = 'Edit';
   editButton.dataset.action = 'edit';
-  editButton.dataset.planId = plan.id;
+  editButton.dataset.planId = meal.idMeal;
 
   const deleteButton = document.createElement('button');
   deleteButton.className = 'btn btn--danger';
   deleteButton.textContent = 'Delete';
   deleteButton.dataset.action = 'delete';
-  deleteButton.dataset.planId = plan.id;
+  deleteButton.dataset.planId = meal.idMeal;
 
   actions.append(editButton, deleteButton);
-  body.append(title, note, date, actions);
-  card.append(image, body);
+  card.append(
+      title,
+      image,
+      meta,
+      userNote,
+      userDate,
+      servingsLabel,
+      ingredientList,
+      cookingInstructions,
+      actions
+  );
+
   plansDisplay.appendChild(card);
 }
 
 /**
   * Renders all stored plans from the localStorage into the plans display area.
-  * If there is no plans stored yet, a simple sentence will be displayed.
   */
 function renderAllPlans() {
   plansDisplay.textContent = '';
@@ -89,7 +163,6 @@ function renderAllPlans() {
     return;
   }
 
-  // Alright we render one by one
   plans.forEach((plan) => renderPlanCard(plan));
 }
 
@@ -98,22 +171,16 @@ function renderAllPlans() {
   * planId: The id of the plan to edit.
   */
 function openEditDialog(planId) {
-  // Ok we double check the planId becoz the user may throw tantrums
   const plans = loadPlans();
-  const plan = plans.find((item) => item.id === planId);
+  const plan = plans.find((item) => item.meal.idMeal === planId);
   if (!plan) {
-    // Safer this way
     showFeedback(plansFeedback, 'Plan not found.');
     return;
   }
 
-  // Update the global variable
   editingPlanId = planId;
   editNote.value = plan.note || '';
   editDate.value = plan.plannedDate || '';
-
-  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal
-  // if you're interested
   editDialog.showModal();
 }
 
@@ -124,12 +191,11 @@ function openEditDialog(planId) {
 function deletePlan(planId) {
   const confirmed = confirm('Delete this plan? This cannot be undone.');
   if (!confirmed) {
-    // The user clicked on Cancel
     return;
   }
 
   const plans = loadPlans();
-  const filtered = plans.filter((plan) => plan.id !== planId);
+  const filtered = plans.filter((plan) => plan.meal.idMeal !== planId);
   savePlans(filtered);
   renderAllPlans();
   showFeedback(plansFeedback, 'Plan deleted successfully.', true);
@@ -175,10 +241,14 @@ function handleEditSubmit(event) {
   }
 
   const plans = loadPlans();
-  const planIndex = plans.findIndex((item) => item.id === editingPlanId);
+  const planIndex = plans.findIndex(
+      (item) => item.meal.idMeal === editingPlanId
+  );
+
   if (planIndex === -1) {
     // If planIndex is -1 that just means the searched item does not exist
     editDialog.close();
+    showFeedback(plansFeedback, 'Plan could not be updated.');
   }
 
   plans[planIndex].note = newNote;
