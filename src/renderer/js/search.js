@@ -288,6 +288,7 @@ function handleCategorySuggestion(category) {
   }
 
   showFeedback(suggestionFeedback, suggestion, true);
+  showFeedback(searchFeedback, 'Searching...', true);
   searchInput.value = category;
   fetchRecipesByCategory(category)
       .then((meals) => {
