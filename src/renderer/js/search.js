@@ -7,7 +7,7 @@ import {
   extractIngredients,
   scaleMeasurement,
   buildCookingInstructionsElement
-} from './utils.js';
+} from '../../shared/utils.js';
 
 const API_BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
 
@@ -87,7 +87,7 @@ function fetchRecipesByCategory(category) {
   */
 function savePlan(meal) {
   const plans = loadPlans();
-  const exists = plans.some((plan) => plan.meal.id === meal.idMeal);
+  const exists = plans.some((plan) => plan.meal.idMeal === meal.idMeal);
   if (exists) {
     showFeedback(searchFeedback, 'This recipe is already in your plans.');
     return;

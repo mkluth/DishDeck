@@ -7,7 +7,7 @@ import {
   extractIngredients,
   scaleMeasurement,
   buildCookingInstructionsElement
-} from './utils.js';
+} from '../../shared/utils.js';
 
 const plansDisplay = document.getElementById('plans-display');
 const plansFeedback = document.getElementById('plans-feedback');
