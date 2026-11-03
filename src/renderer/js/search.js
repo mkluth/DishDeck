@@ -1,5 +1,4 @@
 import {
-  LOCAL_STORAGE_KEY,
   clearFeedback,
   showFeedback,
   loadPlans,

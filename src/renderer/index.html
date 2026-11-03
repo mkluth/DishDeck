@@ -1,7 +1,12 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <!-- Silencing Content Security Policy (CSP) warning -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://www.themealdb.com; connect-src 'self' https://www.themealdb.com"
+    >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DishDeck - Your #1 Recipe Search</title>
     <link rel="stylesheet" href="css/styles.css">
