@@ -230,6 +230,10 @@ function handleSearchSubmit(event) {
     return;
   }
 
+  // Reset the category UI so that it does not goes outdated after a search
+  categorySelect.value = '';
+  clearFeedback(suggestionFeedback);
+
   clearFeedback(searchFeedback);
   showFeedback(searchFeedback, 'Searching...', true);
   fetchRecipes(keyword)
@@ -254,6 +258,10 @@ function handleCategorySuggestion(category) {
   if (category === '') {
     return;
   }
+
+  // Reset the search UI so it does not outdated after a category pick
+  searchInput.value = '';
+  clearFeedback(searchFeedback);
 
   let suggestion = '';
   if (category === 'Beef') {
@@ -289,7 +297,6 @@ function handleCategorySuggestion(category) {
 
   showFeedback(suggestionFeedback, suggestion, true);
   showFeedback(searchFeedback, 'Searching...', true);
-  searchInput.value = category;
   fetchRecipesByCategory(category)
       .then((meals) => {
         displayRecipes(meals);
