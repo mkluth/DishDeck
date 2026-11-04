@@ -10,7 +10,7 @@ A simple recipe dictionary desktop application built with Electron.
 * **Calculate Required Ingredients by Servings:** Calculates the required
   ingredients based on the given number of servings.
 * **Meal Plans CRUD Operations:** Create, view, update, and delete locally
-  stored meal plans.
+  stored meal plans through JavaScript localStorage.
 
 ## Screenshots
 
