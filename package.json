@@ -2,8 +2,8 @@
   "name": "dishdeck",
   "version": "1.0.0",
   "description": "A desktop application that suggests suitable recipes based on selected categories or available ingredients through external APIs. Made with love <3",
-  "license": "ISC",
-  "author": "Luth",
+  "license": "MIT",
+  "author": "Luthfi Muhammad",
   "type": "commonjs",
   "main": "main.js",
   "scripts": {
