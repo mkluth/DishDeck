@@ -1,5 +1,5 @@
 {
-  "name": "dishdeck",
+  "name": "easycook",
   "version": "1.0.0",
   "description": "A desktop application that suggests suitable recipes based on selected categories or available ingredients through external APIs. Made with love <3",
   "license": "MIT",

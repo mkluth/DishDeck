@@ -3,7 +3,7 @@
   * I intentionally exported this so that both search.js and plans.js uses the
   * same read/write key. Munch munch.
   */
-export const LOCAL_STORAGE_KEY = 'dishDeckPlans';
+export const LOCAL_STORAGE_KEY = 'easyCookPlans';
 
 /**
   * Clears any feedback messages in the given element.

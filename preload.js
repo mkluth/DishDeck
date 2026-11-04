@@ -1,5 +1,5 @@
 const {contextBridge} = require('electron');
 
-contextBridge.exposeInMainWorld('dishDeck', {
+contextBridge.exposeInMainWorld('easyCook', {
   isReady: true
 });

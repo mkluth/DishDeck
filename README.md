@@ -1,4 +1,4 @@
-# DishDeck
+# EasyCook
 
 A simple recipe dictionary desktop application built with Electron.
 
