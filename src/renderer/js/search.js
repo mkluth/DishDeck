@@ -160,7 +160,7 @@ function renderRecipeCard(meal, container) {
     });
   }
 
-  // Initial render for base servings is 1
+  // Initial render at the base serving size (scaling factor of 1)
   renderIngredients(1);
 
   servingsInput.addEventListener('input', () => {

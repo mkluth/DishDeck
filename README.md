@@ -26,7 +26,7 @@ A simple recipe dictionary desktop application built with Electron.
 
 ## Acknowledgement
 
-* [Electron](https://www.electronjs.org/docs/latest/)
+* [Electron Documentation](https://www.electronjs.org/docs/latest/)
 * [TheMealDB API](https://www.themealdb.com/documentation)
 * [Google HTML/CSS Style Guide](https://google.github.io/styleguide/htmlcssguide.html#html-style-rules)
 * [Google TS/JS Style Guide](https://google.github.io/styleguide/tsguide.html)
