@@ -31,6 +31,11 @@ A simple recipe dictionary desktop application built with Electron.
 * [Google HTML/CSS Style Guide](https://google.github.io/styleguide/htmlcssguide.html#html-style-rules)
 * [Google TS/JS Style Guide](https://google.github.io/styleguide/tsguide.html)
 
+This project uses TheMealDB's free test API key (key 1), which is permitted for
+educational use. For any production or public app store release, a supporter key
+would be required per TheMealDB's policy.
+
 ## License
 
-This project is licensed under MIT License. See `LICENSE` for more information.
+This project is licensed under MIT License and strictly meant for educational
+purposes only. See `LICENSE` for more information.
